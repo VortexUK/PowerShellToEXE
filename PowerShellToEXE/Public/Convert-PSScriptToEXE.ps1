@@ -1,5 +1,6 @@
 ﻿function Convert-PSScriptToEXE
 {
+    [CmdletBinding(DefaultParameterSetName="STA")] 
     PARAM
     (
         [parameter(Mandatory=$true,
@@ -56,5 +57,4 @@
         return $CompiledResult
     }
     END { }
-
 }

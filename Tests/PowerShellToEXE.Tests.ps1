@@ -1,21 +1,4 @@
-﻿$PSVersion = $PSVersionTable.PSVersion.Major
-Import-Module $PSScriptRoot\..\PowerShellToEXE -Force
-<#Integration test example
-Describe "Get-SEObject PS$PSVersion Integrations tests" {
-
-    Context 'Strict mode' { 
-
-        Set-StrictMode -Version latest
-
-        It 'should get valid data' {
-            $Output = Get-SEObject -Object sites
-            $Output.count -gt 100 | Should be $True
-            $Output.name -contains 'stack overflow'
-        }
-    }
-}
-#>
-#Unit test example
+﻿Import-Module $PSScriptRoot\..\PowerShellToEXE -Force
 InModuleScope PowerShellToEXE {
     Describe "Get-ProgramFrame Unit Tests" {
         $ApartmentType = 'MTA'
@@ -111,6 +94,22 @@ InModuleScope PowerShellToEXE {
             $Output = New-EXECompiler -AssemblyLocations $AssemblyLocations -EXEOutputPath $TestNoExistPath -EXEIconPath $TestExistPath
             It 'should return compiler of type [System.CodeDom.Compiler.CompilerParameters]' {
                 $Output | Should BeOfType System.CodeDom.Compiler.CompilerParameters
+            }
+        }
+    }
+    Describe "Convert-ScriptToBase64String Unit Tests" {
+        $ScriptPath = "C:\Windows\setupact.log" # Just need to get past param validation...
+        Mock -CommandName Get-Content -MockWith {return "This is a test script"}
+        Context 'Parameters Correct' {
+            It 'should return a string' {
+                $Output = Convert-ScripttoBase64String -ScriptPath $ScriptPath
+                $Output | Should BeOfType System.String
+            }
+        }
+        Context "Test Parameter Validation" {
+            $ScriptPath = "Badpath"
+            It ("Should THROW when Script path is invalid " ) {
+                {Convert-ScripttoBase64String -ScriptPath $ScriptPath} | Should throw
             }
         }
     }
