@@ -21,9 +21,9 @@
         {
             if ($LoadedAssemblies.ManifestModule.Name -notcontains $Assembly.Name)
             {
-            $AssemblyName = new-object -TypeName System.Reflection.AssemblyName($Assembly.String)
-            $null = [System.AppDomain]::CurrentDomain.Load($AssemblyName)
-            $LoadedAssemblies = [System.AppDomain]::CurrentDomain.GetAssemblies()
+                $AssemblyName = new-object -TypeName System.Reflection.AssemblyName($Assembly.String)
+                $null = [System.AppDomain]::CurrentDomain.Load($AssemblyName)
+                $LoadedAssemblies = [System.AppDomain]::CurrentDomain.GetAssemblies()
             }
             $Location = $LoadedAssemblies | Where-Object -FilterScript {$_.ManifestModule.Name -eq $Assembly.Name} | Select-Object -First 1 -ExpandProperty Location
             $null = $AssemblyLocations.Add($Location)
