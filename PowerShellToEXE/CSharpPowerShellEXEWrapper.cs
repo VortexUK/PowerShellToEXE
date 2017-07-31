@@ -739,7 +739,7 @@ namespace ik.PowerShell
 						powershell.AddParameters(paramList.GetRange(separator, paramList.Count - separator));
 						powershell.AddCommand("out-string");
 						powershell.AddParameter("-stream");
-						powershell.BeginInvoke<PSObject, PSObject>(inp, outp, null, new AsyncCallback(delegate(IAsyncResult ar)
+						powershell.BeginInvoke<PSObject, PSObject>(null, outp, null, new AsyncCallback(delegate(IAsyncResult ar)
 						{
 							if (ar.IsCompleted)
 								mre.Set();

@@ -51,7 +51,7 @@
     PROCESS 
     {
         $B64InputScript = Convert-ScripttoBase64String -ScriptPath $ScriptPath
-        $ProgramFrame = Get-ProgramFrame -B64InputScript $B64InputScript -CSharpPowerShellEXEwrapper $CSharpPowerShellEXEwrapper -ApartmentType $ApartmentType
+        $ProgramFrame = Get-ProgramFrame -B64InputScript $B64InputScript -ApartmentType $ApartmentType -NoConsole $false -Title "TESTING!" -Version '0.0.0.2' 
         $Compiler = New-EXECompiler -AssemblyLocations $AssemblyLocations -EXEOutputPath $ExecutablePath -EXEIconPath $IconPath
         [System.CodeDom.Compiler.CompilerResults]$CompiledResult = $CSharpCodeProvider.CompileAssemblyFromSource($Compiler, $programFrame)
         return $CompiledResult
