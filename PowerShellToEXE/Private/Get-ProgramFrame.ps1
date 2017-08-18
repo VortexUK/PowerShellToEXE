@@ -24,13 +24,13 @@
 		This is the description you see in the 'details' tab of the output exe
 	
 	.PARAMETER Company
-		This is the Company you see in the 'details' tab of the output exe. Default is 'GResearch'
+		This is the Company you see in the 'details' tab of the output exe. Default is 'CompanyName'
 	
 	.PARAMETER Product
 		This is the Product you see in the 'details' tab of the output exe.
 	
 	.PARAMETER Copyright
-		This is the Copyright you see in the 'details' tab of the output exe. Default is '(c) GResearch all rights reserved'
+		This is the Copyright you see in the 'details' tab of the output exe. Default is '(c) CompanyName all rights reserved'
 	
 	.PARAMETER Trademark
 		This is the Trademark you see in the 'details' tab of the output exe.

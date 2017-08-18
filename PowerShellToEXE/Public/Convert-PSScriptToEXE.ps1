@@ -33,13 +33,13 @@
 		This is the description you see in the 'details' tab of the output exe
 	
 	.PARAMETER Company
-		This is the Company you see in the 'details' tab of the output exe. Default is 'GResearch'
+		This is the Company you see in the 'details' tab of the output exe. Default is 'CompanyName'
 	
 	.PARAMETER Product
 		This is the Product you see in the 'details' tab of the output exe.
 	
 	.PARAMETER Copyright
-		This is the Copyright you see in the 'details' tab of the output exe. Default is '(c) GResearch all rights reserved'
+		This is the Copyright you see in the 'details' tab of the output exe. Default is '(c) CompanyName all rights reserved'
 	
 	.PARAMETER Trademark
 		This is the Trademark you see in the 'details' tab of the output exe.
@@ -138,7 +138,7 @@ function Convert-PSScriptToEXE
 				   ValueFromPipeline = $true,
 				   ValueFromPipelineByPropertyName = $true,
 				   Position = 9)]
-		[System.String]$Company = 'GResearch',
+		[System.String]$Company = 'CompanyName',
 		[Parameter(Mandatory = $false,
 				   ValueFromPipeline = $true,
 				   ValueFromPipelineByPropertyName = $true,
@@ -148,7 +148,7 @@ function Convert-PSScriptToEXE
 				   ValueFromPipeline = $true,
 				   ValueFromPipelineByPropertyName = $true,
 				   Position = 11)]
-		[System.String]$Copyright = '© GResearch, All rights reserved',
+		[System.String]$Copyright = '© CompanyName, All rights reserved',
 		[Parameter(Mandatory = $false,
 				   ValueFromPipeline = $true,
 				   ValueFromPipelineByPropertyName = $true,
