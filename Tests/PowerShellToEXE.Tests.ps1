@@ -1,64 +1,55 @@
-﻿Import-Module $PSScriptRoot\..\PowerShellToEXE -Force
+Import-Module $PSScriptRoot\..\PowerShellToEXE -Force
 InModuleScope PowerShellToEXE {
     Describe "Get-ProgramFrame Unit Tests" {
         $ApartmentType = 'MTA'
         $B64InputScript = 'TESTSCRIPT'
-        $TestWrapper = "change: %ApartmentType% and: %b64InputScript%"
         Context 'Parameters Correct' {
             It 'should return a string' {
-                $Output = Get-ProgramFrame -B64InputScript $B64InputScript -ApartmentType $ApartmentType -CSharpPowerShellEXEwrapper $TestWrapper
+                $Output = Get-ProgramFrame -B64InputScript $B64InputScript -ApartmentType $ApartmentType -NoConsole $false
                 $Output | Should BeOfType System.String
             }
-            It 'should replace % Vars in string' {
-                $Output = Get-ProgramFrame -B64InputScript $B64InputScript -ApartmentType $ApartmentType -CSharpPowerShellEXEwrapper $TestWrapper
+            It 'should contain Apartment Type and b64 script' {
+                $Output = Get-ProgramFrame -B64InputScript $B64InputScript -ApartmentType $ApartmentType -NoConsole $false
                 $Output | Should Match $ApartmentType
                 $Output | Should Match $B64InputScript
-                $Output | Should Not Match '%'
             }
         }
         Context "Test Parameter Validation" {
             $ParamTests = @()
-            $ParamTests += New-Object -TypeName PSObject -Property @{'ApartmentType' = $ApartmentType; 'B64InputScript' = $B64InputScript; 'TestWrapper' = $Testwrapper; 'Result' = 'SUCCEED'}
-            $ParamTests += New-Object -TypeName PSObject -Property @{'ApartmentType' = $ApartmentType; 'B64InputScript' = $B64InputScript; 'TestWrapper' = ''; 'Result' = 'THROW'}
-            $ParamTests += New-Object -TypeName PSObject -Property @{'ApartmentType' = $ApartmentType; 'B64InputScript' = ''; 'TestWrapper' = $Testwrapper; 'Result' = 'THROW'}
-            $ParamTests += New-Object -TypeName PSObject -Property @{'ApartmentType' = 'WRONG'; 'B64InputScript' = $B64InputScript; 'TestWrapper' = $Testwrapper; 'Result' = 'THROW'}
+            $ParamTests += New-Object -TypeName PSObject -Property @{'ApartmentType' = $ApartmentType; 'B64InputScript' = $B64InputScript; 'NoConsole' = $false; 'Result' = 'SUCCEED'}
+            $ParamTests += New-Object -TypeName PSObject -Property @{'ApartmentType' = $ApartmentType; 'B64InputScript' = ''; 'NoConsole' = $false; 'Result' = 'THROW'}
+            $ParamTests += New-Object -TypeName PSObject -Property @{'ApartmentType' = 'WRONG'; 'B64InputScript' = $B64InputScript; 'NoConsole' = $false; 'Result' = 'THROW'}
             foreach ($Test in $ParamTests)
             {
-                It ("Should {3} with the following Params: ApartmentType='{0}' B64InputScript='{1}' Wrapper='{2}'" -f $Test.ApartmentType, $Test.B64InputScript,$Test.Testwrapper,$Test.Result) {
+                It ("Should {3} with the following Params: ApartmentType='{0}' B64InputScript='{1}' Wrapper='{2}'" -f $Test.ApartmentType, $Test.B64InputScript,$Test.NoConsole,$Test.Result) {
                     Switch ($Test.Result)
                     {
                         'SUCCEED'
                         {
-                            $Output = Get-ProgramFrame -B64InputScript $Test.B64InputScript -ApartmentType $Test.ApartmentType -CSharpPowerShellEXEwrapper $Test.TestWrapper
+                            $Output = Get-ProgramFrame -B64InputScript $Test.B64InputScript -ApartmentType $Test.ApartmentType -NoConsole $Test.NoConsole
                             $Output | Should BeOfType System.String
                         }
                         'THROW'
                         {
-                            {Get-ProgramFrame -B64InputScript $Test.B64InputScript -ApartmentType $Test.ApartmentType -CSharpPowerShellEXEwrapper $Test.TestWrapper} | Should throw
+                            {Get-ProgramFrame -B64InputScript $Test.B64InputScript -ApartmentType $Test.ApartmentType -NoConsole $Test.NoConsole} | Should throw
                         }
                     }
                 }
             }
         }
     }
-    Describe "Get-CSHarpCodeProvider Unit Tests" {
-        It 'should return an object of type [Microsoft.CSharp.CSharpCodeProvider]' {
-            $Output = Get-CSHarpCodeProvider
-            $Output | Should BeOfType Microsoft.CSharp.CSharpCodeProvider
-        }
-    }
     Describe "Get-AssemblyLocation Unit Tests" {
         $RequiredAssemblies = @()
-        $RequiredAssemblies += New-Object -typename psobject -property @{'Name' = "System.dll";'String' = "System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"}
-        $RequiredAssemblies += New-Object -typename psobject -property @{'Name' = "Microsoft.PowerShell.ConsoleHost.dll"; 'String' = "Microsoft.PowerShell.ConsoleHost, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"}
-        Context 'Parameters Correct' {
-
-            $Output = [System.Collections.ArrayList](Get-AssemblyLocation -Assemblies $RequiredAssemblies)
+		$RequiredAssemblies += New-Object -typename psobject -property @{ 'Name' = "System.dll"; 'String' = "System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"; "NoConsole" = $false; "Required" =$true }
+		$RequiredAssemblies += New-Object -typename psobject -property @{ 'Name' = "Microsoft.PowerShell.ConsoleHost.dll"; 'String' = "Microsoft.PowerShell.ConsoleHost, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"; "NoConsole" = $false; "Required" = $true }
+		Context 'Parameters Correct' {
+			$Output = [System.Collections.ArrayList](Get-AssemblyLocation -Assemblies $RequiredAssemblies)
             It 'should return Assembly location' {
                 $Output[0] | Should BeExactly 'C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll'
             }
             It 'should be of type [System.Collections.ArrayList]' {
-                ,$Output | Should BeOfType System.Collections.ArrayList
+				 ,$Output | Should BeOfType System.Collections.ArrayList
+				
             }
         }
         Context "Test Parameter Validation" {
@@ -84,20 +75,7 @@ InModuleScope PowerShellToEXE {
             }
         }
     }
-    Describe "New-EXECompiler Unit Tests" {
-        $RequiredAssemblies = @()
-        $RequiredAssemblies += New-Object -typename psobject -property @{'Name' = "System.dll";'String' = "System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"}
-        $RequiredAssemblies += New-Object -typename psobject -property @{'Name' = "Microsoft.PowerShell.ConsoleHost.dll"; 'String' = "Microsoft.PowerShell.ConsoleHost, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"}
-        $TestNoExistPath = 'D:\BadPaath'
-        $TestExistPath = 'D:\'
-        Context 'Parameters Correct' {
-            $Output = New-EXECompiler -AssemblyLocations $AssemblyLocations -EXEOutputPath $TestNoExistPath -EXEIconPath $TestExistPath
-            It 'should return compiler of type [System.CodeDom.Compiler.CompilerParameters]' {
-                $Output | Should BeOfType System.CodeDom.Compiler.CompilerParameters
-            }
-        }
-    }
-    Describe "Convert-ScriptToBase64String Unit Tests" {
+	Describe "Convert-ScriptToBase64String Unit Tests" {
         $ScriptPath = "C:\Windows\setupact.log" # Just need to get past param validation...
         Mock -CommandName Get-Content -MockWith {return "This is a test script"}
         Context 'Parameters Correct' {
