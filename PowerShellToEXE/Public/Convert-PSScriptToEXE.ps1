@@ -219,9 +219,7 @@ function Convert-PSScriptToEXE
 			$AssemblyLocations = Get-AssemblyLocation -Assemblies $RequiredAssemblies -NoConsole ($NoConsole.IsPresent)
 			$B64InputScript = Convert-ScripttoBase64String -ScriptPath $ScriptPath
 			$ProgramFrame = Get-ProgramFrame -B64InputScript $B64InputScript -ApartmentType $ApartmentType -NoConsole ($NoConsole.IsPresent) @ProgramDetailsSplat
-			$null = Start-Job -Name "CompileEXE" -ScriptBlock $CreateEXEScriptBlock -ErrorAction Stop
-			$null = Wait-Job -Name "CompileEXE"
-			$null = Remove-Job -Name "CompileEXE"
+			$null = Start-Job -Name "CompileEXE" -ScriptBlock $CreateEXEScriptBlock | Wait-Job | Remove-Job
 			return (Get-Item -Path $ExecutablePath)
 		}
 		catch
